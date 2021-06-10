@@ -14,7 +14,7 @@ export class ProvidersService {
 
   public getProviders(): BaseProvider[] {
     return [
-      this.ytsService,
+      // this.ytsService,
       this.eztvService
     ]
   }

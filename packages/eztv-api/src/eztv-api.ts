@@ -46,11 +46,10 @@ export class EztvApi {
   /**
    * Make a get request to eztv.ag.
    * @param {!string} endpoint - The endpoint to make the request to.
-   * @param {?boolean} raw - Get the raw body of the response.
    * @returns {Promise<Function, Error>} - The response body wrapped in
    * cheerio.
    */
-  private get(endpoint: string): Promise<cheerio.Root | string> {
+  private get(endpoint: string): Promise<any| string> {
     const uri = `${this.baseUrl}${endpoint}`
 
     this.debug(`Making request to: '${uri}'`)
@@ -165,8 +164,8 @@ export class EztvApi {
     return this.get('showlist/').then(($) => {
       const regex = /\/shows\/(.*)\/(.*)\//
 
-      return ($ as cheerio.Root)('.thread_link').map(function () {
-        const entry = ($ as cheerio.Root)(this)
+      return $('.thread_link').map(function () {
+        const entry = $(this)
         const href = entry.attr('href')
 
         const title = entry.text()

@@ -45,7 +45,7 @@
   "resolutions": {
     "webtorrent": "0.111.0",
     "webtorrent-cli": "3.0.7",
-    "wrtc": "0.4.5"
+    "wrtc": "0.4.7"
   },
   "dependencies": {
     "@hapi/joi": "17.1.1",
@@ -107,7 +107,6 @@
     "@types/webtorrent": "^0.109.0",
     "@typescript-eslint/eslint-plugin": "4.11.0",
     "@typescript-eslint/parser": "4.11.0",
-    "dotenv": "6.2.0",
     "eslint": "7.16.0",
     "eslint-config-prettier": "7.1.0",
     "jest": "26.6.3",

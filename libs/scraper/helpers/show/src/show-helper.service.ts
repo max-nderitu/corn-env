@@ -177,19 +177,19 @@ export class ShowHelperService extends BaseHelper {
       .catch((item) => item)
   }
 
-  public async addTorrents(item: Show, torrents: ScrapedShowTorrents): Promise<Show> {
-    item.seasons = this.seasonHelperService.formatTraktSeasons(
-      item,
+  public async addTorrents(show: Show, torrents: ScrapedShowTorrents): Promise<Show> {
+    show.seasons = this.seasonHelperService.formatTraktSeasons(
+      show,
       torrents
     )
-    item.numSeasons = item.seasons.length + 1
+    show.numSeasons = show.seasons.length + 1
 
-    item.seasons = await this.seasonHelperService.enhanceSeasons(
-      item,
-      item.seasons
+    show.seasons = await this.seasonHelperService.enhanceSeasons(
+      show,
+      show.seasons
     )
 
-    return Promise.resolve(item)
+    return Promise.resolve(show)
   }
 
   public async addItemToDatabase(item: Show): Promise<void> {
@@ -204,19 +204,19 @@ export class ShowHelperService extends BaseHelper {
     await this.seasonHelperService.addSeasonsToDatabase(seasons)
   }
 
-  public async updateItemInDatabase(item: Show, hadMetadataUpdate?: boolean): Promise<void> {
-    this.logger.log(`'${item.title}' is a existing show!`)
-    item.latestEpisodeAired = this.getLastEpisodeAired(item)
-    item.updatedAt = Number(new Date())
+  public async updateItemInDatabase(show: Show, hadMetadataUpdate?: boolean): Promise<void> {
+    this.logger.log(`'${show.title}' is a existing show!`)
+    show.latestEpisodeAired = this.getLastEpisodeAired(show)
+    show.updatedAt = Number(new Date())
 
     if (hadMetadataUpdate) {
-      item.lastMetadataUpdate = Number(new Date())
+      show.lastMetadataUpdate = Number(new Date())
     }
 
-    const seasons = item.seasons
-    delete item.seasons
+    const seasons = show.seasons
+    delete show.seasons
 
-    await this.showModel.findByIdAndUpdate(item._id, item)
+    await this.showModel.findByIdAndUpdate(show._id, show)
     await this.seasonHelperService.updateSeasonsInDatabase(seasons)
 
     return Promise.resolve(undefined)

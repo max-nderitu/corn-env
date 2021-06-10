@@ -28,7 +28,7 @@ export const formatTorrents = (torrents: Torrents, foundTorrents: Torrents = [])
 
       // For 2160p we get the smallest one
       if (torrent.quality === '2160p') {
-        // Check fi existing torrent is bigger then the new one
+        // Check if existing torrent is bigger than the new one
         if (torrent.size < match.size) {
           add = true
         }

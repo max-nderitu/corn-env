@@ -234,7 +234,8 @@ export abstract class BaseProvider {
     // Only add images if should we don't have a existing item or
     // we need to update it
     if (!existingItem || updateExistingItem) {
-      newItem = await helper.addImages(newItem)
+      // Disabled for now
+      // newItem = await helper.addImages(newItem)
     }
 
     // Add the torrents to the item
