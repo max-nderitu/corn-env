@@ -65,7 +65,7 @@ module.exports = {
     {
       name: 'Scraper',
       script: 'dist/apps/scraper/main.js',
-      node_args: '--max-old-space-size=3072',
+      node_args: '--max-old-space-size=1500',
       instances: 1,
       max_restarts: 5,
       autorestart: true,
