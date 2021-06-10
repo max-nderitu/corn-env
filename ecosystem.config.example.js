@@ -51,14 +51,14 @@ const sharedEnv = {
 module.exports = {
   apps: [
     {
-      name: 'API',
-      script: 'dist/apps/api/main.js',
+      name: 'Rest Api',
+      script: 'dist/apps/rest-api/main.js',
       instances: 1,
       max_restarts: 5,
       autorestart: true,
       watch: false,
-      error_file: `${logsDir}/api/error.log`,
-      out_file: `${logsDir}/api/out.log`,
+      error_file: `${logsDir}/rest-api/error.log`,
+      out_file: `${logsDir}/rest-api/out.log`,
       log_file: null,
       env: sharedEnv,
     },
