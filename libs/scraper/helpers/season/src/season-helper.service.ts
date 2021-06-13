@@ -7,7 +7,7 @@ import { Episode } from '@pct-org/types/episode'
 import { EpisodeHelperService } from '@pct-org/scraper/helpers/episode'
 import { IMAGES_DEFAULT } from '@pct-org/types/image'
 import { TmdbService } from '@pct-org/services/tmdb'
-import * as pMap from 'p-map'
+import * as pLimit from 'p-limit';
 
 @Injectable()
 export class SeasonHelperService {
@@ -116,15 +116,13 @@ export class SeasonHelperService {
   }
 
   public async enhanceSeasons(show: Show, seasons: Season[]): Promise<Season[]> {
-    const enhancedSeasons: (boolean | Season)[] = await pMap(
-      seasons,
-      (season) => {
-        return this.enhanceSeason(show, season)
-      },
-      {
-        concurrency: 1
+    const limit = pLimit(1)
+
+    const enhancedSeasons: (boolean | Season)[] =
+      await Promise.all(seasons.map((season) => {
+        return limit(() => this.enhanceSeason(show, season))
       }
-    )
+    ))
 
     // Remove all the falsy seasons
     return enhancedSeasons.filter(Boolean) as Season[]

@@ -1,4 +1,4 @@
-import * as pMap from 'p-map'
+import * as pLimit from 'p-limit';
 import * as pTimes from 'p-times'
 import { Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -65,13 +65,11 @@ export abstract class BaseProvider {
   async scrapeConfigs(): Promise<void> {
     this.logger.log(`Started scraping...`)
 
-    await pMap(
-      this.configs,
-      (config) => this.scrapeConfig(config),
-      {
-        concurrency: 1
-      }
-    )
+    const limit = pLimit(1)
+
+    await Promise.all(this.configs.map(config =>
+      limit(() => this.scrapeConfig(config),)
+    ))
 
     this.logger.log(`Done scraping`)
   }
@@ -109,32 +107,32 @@ export abstract class BaseProvider {
 
       this.logger.log(`Total content ${allContent.length}`)
 
-      await pMap(
-        allContent,
-        async (content) => {
-          const isInBlacklist = await this.isItemBlackListed(content)
+      const limit = pLimit(1)
 
-          // Only get data for this item if it's not in the blacklist
-          if (!isInBlacklist) {
-            try {
-              await this.enhanceAndImport(content)
+      const handleContent = async (content) => {
+        const isInBlacklist = await this.isItemBlackListed(content)
 
-            } catch (err) {
-              const errorMessage = err.message || err
+        // Only get data for this item if it's not in the blacklist
+        if (!isInBlacklist) {
+          try {
+            await this.enhanceAndImport(content)
 
-              this.logger.error(`BaseProvider.scrapeConfig: ${errorMessage}`, err.stack)
+          } catch (err) {
+            const errorMessage = err.message || err
 
-              // Log the content so it can be better debugged from logs
-              if (errorMessage.includes('Could not find any data with slug')) {
-                this.logger.error(JSON.stringify(content))
-              }
+            this.logger.error(`BaseProvider.scrapeConfig: ${errorMessage}`, err.stack)
+
+            // Log the content so it can be better debugged from logs
+            if (errorMessage.includes('Could not find any data with slug')) {
+              this.logger.error(JSON.stringify(content))
             }
           }
-        },
-        {
-          concurrency: this.maxWebRequests
         }
-      )
+      }
+
+      await Promise.all(allContent.map(content =>
+        limit(() => handleContent(content))
+      ))
     } catch (err) {
       this.logger.error(`Catch BaseProvider.scrapeConfig: ${err.message || err}`, err.stack)
     }
@@ -283,7 +281,7 @@ export abstract class BaseProvider {
   protected getAllContent(torrents: any): Promise<Array<ScrapedItem>> {
     const items = new Map()
 
-    return pMap(torrents, (torrent) => {
+    return Promise.all(torrents.map((torrent) => {
       if (!torrent) {
         return
       }
@@ -306,9 +304,8 @@ export abstract class BaseProvider {
       }
 
       return items.set(slug, item)
-    }, {
-      concurrency: 1
-    }).then(() => Array.from(items.values()))
+    })).then(() => Array.from(items.values()))
+
   }
 
   /**
