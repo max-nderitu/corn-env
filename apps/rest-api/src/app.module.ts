@@ -7,6 +7,7 @@ import { ConfigService } from './shared/config/config.service'
 
 import { MoviesModule } from './routes/movies/movies.module'
 import { ShowsModule } from './routes/shows/shows.module'
+import { VersionModule } from './routes/version/version.module'
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { ShowsModule } from './routes/shows/shows.module'
     // Routes
     MoviesModule,
     ShowsModule,
-
+    VersionModule,
+    
     // Enable Mongoose
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
