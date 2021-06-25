@@ -1,7 +1,7 @@
 import { HttpModule, Module } from '@nestjs/common'
 import { VersionService } from '@pct-org/types/version'
 
-import { VersionController } from './Version.controller'
+import { VersionController } from './version.controller'
 
 @Module({
   imports: [
